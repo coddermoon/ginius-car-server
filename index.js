@@ -18,21 +18,35 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run(){
 try{
-const databaseCollection = client.db('giniusUser').collection('services')
+const serviceCollection = client.db('giniusUser').collection('services')
+const ordersCollection = client.db('giniusUser').collection('orders')
 
 app.get('/services',async(req,res)=>{
     const query = {}
-    const cursor = databaseCollection.find(query)
+    const cursor = serviceCollection.find(query)
     const services = await cursor.toArray()
     res.send(services)
+})
+
+// post orders
+
+app.post('/orders',async (req,res)=>{
+    const orders = req.body
+    const data = await serviceCollection.insertOne(orders)
+    res.send(data)
 })
 
 app.get('/services/:id', async (req, res) => {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
-    const service = await databaseCollection.findOne(query);
+    const service = await serviceCollection.findOne(query);
     res.send(service);
 });
+
+
+// post data in mongodb
+
+
 
 
 
